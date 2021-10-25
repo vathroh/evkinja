@@ -62,8 +62,8 @@ const slideactive = function(){
     isslideactive.value = !isslideactive.value
 }
         const data = reactive({
-            email :  'vathroh@gmail.com',
-            password :  'Barik2122',
+            email :  '',
+            password :  '',
             isLoading:  false,
             url:  process.env.VUE_APP_ROOT_API
         })
