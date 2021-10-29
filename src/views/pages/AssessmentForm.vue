@@ -47,7 +47,7 @@
             <tr v-for="(aspect, idx) in criteria.aspects" :key="aspect.aspect">
                 <td style="text-align: right;">{{ idx + 1 }}</td>
                 <td>{{ aspect.aspect }}</td>
-                <td class="text-center"><input type="checkbox" /></td>
+                <td class="text-center"><input type="checkbox" :checked="aspect.variable == 1" /></td>
                 <td class="text-center">{{ aspect.achievement }}</td>
                 <td class="text-center">{{ aspect.assessment }}</td>
                 <td class="text-center">{{ aspect.score }}</td>

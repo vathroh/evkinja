@@ -5,9 +5,6 @@ export default createStore({
         authenticated: false,
         extent: false,
         user: {
-            id: '',
-            name: '',
-            role: ''
         },
         data: {
             summary: {},
@@ -16,12 +13,15 @@ export default createStore({
 
     },
     mutations: {
-        setRole: (state, value) => state.user.role = value,
+        setHrm: (state, value) => state.user.isHrm = value,
+        setAssessed: (state, value) => state.user.isAssessed = value,
+        setAssessor: (state, value) => state.user.isAssessor = value,
         setExtent: (state, value) => state.extent = value,
         setAuth: (state, auth) => state.authenticated = auth,
         setUserId: (state, value) => state.user.id = value,
         setUserName: (state, value) => state.user.name = value,
-        setRecapitulation: (state, value) => state.data.recapitulation = value
+        setRecapitulation: (state, value) => state.data.recapitulation = value,
+        setUser: (state, obj) => state.user = obj
     },
     actions: {
     },

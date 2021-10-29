@@ -2,7 +2,7 @@
     <!-- Card -->
     <spinner :isLoading="data.isLoading" />
 
-            <div class="card-box" v-if="role == 'hrm'">
+            <div class="card-box" v-if="user.isAssessor || user.isHrm">
                 <div class="card">
                     <div>
                         <div class="numbers">
@@ -92,17 +92,20 @@
                     <div class="icon-box">
                         <i class="bi bi-thermometer-sun"></i>
                     </div>
-                </div>
+                 </div>
             </div> 
-            
-            <!-- Details -->
-            <div class="details" v-if="role == 'hrm'">
+    <div class="card-box">
+       <h1 v-if="user.isAssessed"></h1> 
+       <h1 v-if="user.isAssessor"></h1> 
+       <h1 v-if="user.isHrm">HRM</h1>
+    </div>
+           <!-- Details -->
+            <div class="details" v-if="user.isHrm || user.isAssessor">
                 <div class="primary-card">
                     <div class="card-header">
-                        <h2>Recent Orders</h2>
-                        <a href="#" class="btn">View All</a>
+                        <h2>Summary</h2>
                     </div>
-                    <table>
+                    <table v-if="user.zone_level_id==1">
                         <thead>
                             <tr class="text-center">
                                 <td rowspan="2">No.</td>
@@ -124,16 +127,52 @@
                             <tr v-for="(jobTitle, index) in data.jobTitles" :key="jobTitle.id">
                                 <td>{{ index + 1}}</td>
                                 <td>{{ jobTitle.job_title }}</td>
-                                <td class="text-center highlight">{{ jobTitle.count }}</td>
-                                <td class="text-center">{{ jobTitle.belumMengisi }}</td>
-                                <td class="text-center">{{ jobTitle.prosesMengisi }}</td>
-                                <td class="text-center">{{ jobTitle.selesaiMengisi }}</td>
-                                <td class="text-center highlight">{{ jobTitle.siapEvaluasi }}</td>
-                                <td class="text-center highlight">{{ jobTitle.prosesEvaluasi }}</td>
-                                <td class="text-center highlight">{{ jobTitle.selesaiEvaluasi }}</td>
+                                <td class="text-center highlight">{{ Object.values(jobTitle.count).length }}</td>
+                                <td class="text-center">{{ Object.values(jobTitle.belumMengisi).length }}</td>
+                                <td class="text-center">{{ Object.values(jobTitle.prosesMengisi).length }}</td>
+                                <td class="text-center">{{ Object.values(jobTitle.selesaiMengisi).length }}</td>
+                                <td class="text-center highlight">{{ Object.values(jobTitle.siapEvaluasi).length }}</td>
+                                <td class="text-center highlight">{{ Object.values(jobTitle.prosesEvaluasi).length }}</td>
+                                <td class="text-center highlight">{{ Object.values(jobTitle.selesaiEvaluasi).length }}</td>
                             </tr>
                         </tbody>
                     </table>
+                    <table v-if="user.zone_level_id == 2 || user.zone_level_id == 3">
+                        <thead>
+                            <tr class="text-center">
+                                <td rowspan="2">No.</td>
+                                <td rowspan="2">Posisi</td>
+                                <td rowspan="2" class="highlight">Jumlah<br>Personil</td>
+                                <td colspan="3" class="text-center">Mengisi</td>
+                                <td colspan="3" class="text-center highlight">Evaluasi</td>
+                            </tr>
+                            <tr>
+                                <td>Belum</td>
+                                <td>Proses</td>
+                                <td>Selesai</td>
+                                <td class="highlight">Siap</td>
+                                <td class="highlight">Proses</td>
+                                <td class="highlight">Selesai</td>
+                            </tr>
+                        </thead>
+                        <tbody v-for="district in data.districts" :key="district.id">
+                            <tr>
+                                <td colspan="9" style="background:blue;">{{ district.nama_kab }}</td>
+                            </tr>
+                            <tr v-for="(jobTitle, index) in data.jobTitles" :key="jobTitle.id">
+                                <td>{{ index + 1}}</td>
+                                <td>{{ jobTitle.job_title }}</td>
+                                <td class="text-center highlight">{{ Object.values(jobTitle.count).filter( e => e.district == district.nama_kab).length }}</td>
+                                <td class="text-center">{{ Object.values(jobTitle.belumMengisi).filter( e => e.district == district.nama_kab).length }}</td>
+                                <td class="text-center">{{ Object.values(jobTitle.prosesMengisi).filter( e => e.district == district.nama_kab ).length }}</td>
+                                <td class="text-center">{{ Object.values(jobTitle.selesaiMengisi).filter( e => e.district == district.nama_kab ).length }}</td>
+                                <td class="text-center highlight">{{ Object.values(jobTitle.siapEvaluasi).filter( e => e.district == district.nama_kab).length }}</td>
+                                <td class="text-center highlight">{{ Object.values(jobTitle.prosesEvaluasi).filter( e => e.district == district.nama_kab).length }}</td>
+                                <td class="text-center highlight">{{ Object.values(jobTitle.selesaiEvaluasi).filter( e => e.district == district.nama_kab).length }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                 </div>
                 <div class="secondary-card">
                     <div class="card-header">
@@ -283,8 +322,9 @@ export default {
         const store = useStore()
         const router = useRouter()
         const authenticated = computed( () => store.state.authenticated)
+        const role = reactive(computed( () => store.state.user.role))
         const user = reactive(computed( () => store.state.user))
-  
+
         const data = reactive({
             jobTitles : [],
             districts :[],
@@ -318,147 +358,142 @@ export default {
             async () => {
                 data.isLoading = true
                 try {
-                    const response = await fetch(process.env.VUE_APP_ROOT_API +'/user', {
+                    const response = await fetch(process.env.VUE_APP_ROOT_API +'/me', {
                     headers :  { 'Content-Type': 'application/json' },
                     credentials: 'include'
                     })
 
+                    const roleResponse = await fetch(process.env.VUE_APP_ROOT_API + '/evkinja/role', {
+                        headers: { 'Content-Type': 'application/json'},
+                        credentials:  'include'
+                    })
+
+                    const jobTitleResponse = await fetch(process.env.VUE_APP_ROOT_API +'/evkinja/current-job-title', {
+                        headers :  { 'Content-Type': 'application/json' },
+                        credentials: 'include'
+                    })
+
                     const content = await response.json()
-
                     store.commit('setAuth', true)
-                    store.commit('setUserId', content.id)
-                    store.commit('setUserName', content.name)
+                    store.commit('setUser', Object.values(content)[0])
 
+                    const role = await roleResponse.json()
+                    if(role.assessed){
+                        store.commit('setAssessed', true)
+                        localStorage.setItem('isAssessed', true)
+                    }
+                    if(role.assessor){
+                        store.commit('setAssessor', true)
+                        localStorage.setItem('isAssessor', true)
+                    }
+                    if(role.hrm){
+                        store.commit('setHrm', true)
+                        localStorage.setItem('isHrm', true)
+                    }
+
+                    const dataresponse = await jobTitleResponse.json()
+                    data.jobTitles = Object.values(dataresponse).filter( j => j.count.length > 0 )
+                    store.commit('setRecapitulation', data.jobTitles)
+
+                    let jumlahPersonil = []
+                    data.jobTitles.map( (item) => jumlahPersonil.push(Object.values(item.count).length))
+                    data.summary.jumlahPersonil = jumlahPersonil.reduce( (a,b) => { return a+b },0 )
+
+                    let belumMengisi = [];
+                    let databelumMengisi = [];
+                    data.jobTitles.map( (item) => belumMengisi.push(Object.values(item.belumMengisi).length))
+                    data.summary.belumMengisi = belumMengisi.reduce( (a,b) => { return a+b },0 )
+                    data.jobTitles.map( (item) => {
+                        if(item.belumMengisi.length > 0 ){
+                            databelumMengisi.push(Object.values(item.belumMengisi))
+                        }
+                    })
+                    databelumMengisi.map( (item) => data.details.belumMengisi.push(item[0]))
+
+                    let prosesMengisi = []
+                    let dataprosesMengisi = []
+                    data.jobTitles.map( (item) => prosesMengisi.push(Object.values(item.prosesMengisi).length))
+                    data.summary.prosesMengisi = prosesMengisi.reduce( (a,b) => { return a+b },0 )
+                    data.jobTitles.map( (item) => {
+                        if(Object.values(item.prosesMengisi).length > 0 ){
+                            dataprosesMengisi.push(Object.values(item.prosesMengisi))
+                        }
+                    })
+                    dataprosesMengisi.map( (item) => data.details.prosesMengisi.push( item[0] ))
+                    
+
+                    let selesaiMengisi = []
+                    let dataselesaiMengisi = []
+                    data.jobTitles.map( (item) => selesaiMengisi.push(Object.values(item.selesaiMengisi).length))
+                    data.summary.selesaiMengisi = selesaiMengisi.reduce( (a,b) => { return a+b },0 )
+                    data.jobTitles.map( (item) => {
+                        if(Object.values( item.selesaiMengisi ).length > 0 ) {
+                            dataselesaiMengisi.push(Object.values(item.selesaiMengisi))
+                        }
+                    })
+                    dataselesaiMengisi.map( (item) => data.details.selesaiMengisi.push( item[0] ))
+
+                    let siapEvaluasi = []
+                    let datasiapEvaluasi = []
+                    data.jobTitles.map( (item) => siapEvaluasi.push(Object.values(item.siapEvaluasi).length))
+                    data.summary.siapEvaluasi = siapEvaluasi.reduce( (a,b) => { return a+b },0 )
+                    data.jobTitles.map( (item) => {
+                        if(Object.values(item.siapEvaluasi).length > 0 ) {
+                            datasiapEvaluasi.push(Object.values(item.siapEvaluasi))
+                        }
+                    })
+                    datasiapEvaluasi.map( (item) => data.details.siapEvaluasi.push( item[0] ))
+
+                    let prosesEvaluasi = []
+                    let dataprosesEvaluasi = []
+                    data.jobTitles.map( (item) => prosesEvaluasi.push(Object.values(item.prosesEvaluasi).length))
+                    data.summary.prosesEvaluasi = prosesEvaluasi.reduce( (a,b) => { return a+b },0 )
+                    data.jobTitles.map( (item) => {
+                        if(Object.values(item.prosesEvaluasi).length > 0 ) {
+                            dataprosesEvaluasi.push(Object.values(item.prosesEvaluasi))
+                        }
+                    })
+                    dataprosesEvaluasi.map( (item) => data.details.prosesEvaluasi.push( item[0] ))
+
+                    let selesaiEvaluasi = []
+                    let dataselesaiEvaluasi = []
+                    data.jobTitles.map( (item) => selesaiEvaluasi.push(Object.values(item.selesaiEvaluasi).length))
+                    data.summary.selesaiEvaluasi = selesaiEvaluasi.reduce( (a,b) => { return a+b },0)
+                    data.jobTitles.map( (item) => {
+                        if(Object.values(item.selesaiEvaluasi).length > 0 ) {
+                            dataselesaiEvaluasi.push(Object.values(item.selesaiEvaluasi))
+                        }
+                    })
+                    dataselesaiEvaluasi.map( (item) => data.details.selesaiEvaluasi.push( item[0] ))
+
+                    const districtsResponse = await fetch(process.env.VUE_APP_ROOT_API + '/zone/districts', {
+                        headers: {'Content-Type': 'application/json'},
+                        credentials: 'include'
+                    })
+                    data.districts = await districtsResponse.json();
+                
                 } catch(e) {
                     store.commit('setAuth', false)
                     localStorage.removeItem('authenticated')
+                    localStorage.removeItem('isAssessed')
+                    localStorage.removeItem('isAssessor')
+                    localStorage.removeItem('isHrm')
                     router.push('/login')
                 }
 
-                const roleResponse = await fetch(process.env.VUE_APP_ROOT_API + '/evkinja/role', {
-                    headers: { 'Content-Type': 'application/json'},
-                    credentials:  'include'
-                })
-
-                const role = await roleResponse.json()
-                store.commit('setRole', role.role)
-                localStorage.setItem('role', role.role)
-
-                const jobTitleResponse = await fetch(process.env.VUE_APP_ROOT_API +'/evkinja/current-job-title', {
-                    headers :  { 'Content-Type': 'application/json' },
-                    credentials: 'include'
-                })
-
-                data.jobTitles = await jobTitleResponse.json()
-                store.commit('setRecapitulation', data.jobTitles)
-
-                let belumMengisi = []
-                data.jobTitles.map( (item) => belumMengisi.push(item.belumMengisi))
-                data.summary.belumMengisi = belumMengisi.reduce( (a,b) => a+b )
-
-                let jumlahPersonil = []
-                data.jobTitles.map( (item) => jumlahPersonil.push(item.count))
-                data.summary.jumlahPersonil = jumlahPersonil.reduce( (a,b) => a+b )
-
-                let prosesMengisi = []
-                data.jobTitles.map( (item) => prosesMengisi.push(item.prosesMengisi))
-                data.summary.prosesMengisi = prosesMengisi.reduce( (a,b) => a+b )
-
-                let selesaiMengisi = []
-                data.jobTitles.map( (item) => selesaiMengisi.push(item.selesaiMengisi))
-                data.summary.selesaiMengisi = selesaiMengisi.reduce( (a,b) => a+b )
-
-                let siapEvaluasi = []
-                data.jobTitles.map( (item) => siapEvaluasi.push(item.siapEvaluasi))
-                data.summary.siapEvaluasi = siapEvaluasi.reduce( (a,b) => a+b )
-
-                let prosesEvaluasi = []
-                data.jobTitles.map( (item) => prosesEvaluasi.push(item.prosesEvaluasi))
-                data.summary.prosesEvaluasi = prosesEvaluasi.reduce( (a,b) => a+b )
-
-                let selesaiEvaluasi = []
-                data.jobTitles.map( (item) => selesaiEvaluasi.push(item.selesaiEvaluasi))
-                data.summary.selesaiEvaluasi = selesaiEvaluasi.reduce( (a,b) => a+b )
-
                  data.isLoading = false
             }
-
         )
 
-        const belumMengisi = async () => {
-            data.isLoading = true
-            const response = await fetch(process.env.VUE_APP_ROOT_API +'/evkinja/belum-mengisi', {
-                headers :  { 'Content-Type': 'application/json' },
-                credentials: 'include'
-                })
-            const dataBelumMengisi = await response.json()
-            data.details.belumMengisi = dataBelumMengisi
-            data.isBelumMengisi = !data.isBelumMengisi
-            data.isLoading = false
-        }
-
-        const prosesMengisi = async () => {
-            data.isLoading = true
-            const response = await fetch(process.env.VUE_APP_ROOT_API +'/evkinja/proses-mengisi', {
-                headers :  { 'Content-Type': 'application/json' },
-                credentials: 'include'
-                })
-            const dataProsesMengisi = await response.json()
-            data.details.prosesMengisi = dataProsesMengisi
-            data.isProsesMengisi = !data.isProsesMengisi
-            data.isLoading = false
-        }
-
-        const selesaiMengisi = async () => {
-            data.isLoading = true
-            const response = await fetch(process.env.VUE_APP_ROOT_API +'/evkinja/selesai-mengisi', {
-                headers :  { 'Content-Type': 'application/json' },
-                credentials: 'include'
-                })
-            const dataSelesaiMengisi = await response.json()
-            data.details.selesaiMengisi = dataSelesaiMengisi
-            data.isSelesaiMengisi = !data.isSelesaiMengisi
-            data.isLoading = false
-        }
-
-        const siapEvaluasi = async () => {
-            data.isLoading = true
-            const response = await fetch(process.env.VUE_APP_ROOT_API +'/evkinja/siap-evaluasi', {
-                headers :  { 'Content-Type': 'application/json' },
-                credentials: 'include'
-                })
-            const dataSiapEvaluasi = await response.json()
-            data.details.siapEvaluasi = dataSiapEvaluasi
-            data.isSiapEvaluasi = !data.isSiapEvaluasi
-            data.isLoading = false
-        }
-
-        const prosesEvaluasi = async () => {
-            data.isLoading = true
-            const response = await fetch(process.env.VUE_APP_ROOT_API +'/evkinja/proses-evaluasi', {
-                headers :  { 'Content-Type': 'application/json' },
-                credentials: 'include'
-                })
-            const dataProsesEvaluasi = await response.json()
-            data.details.prosesEvaluasi = dataProsesEvaluasi
-            data.isProsesEvaluasi = !data.isProsesEvaluasi
-            data.isLoading = false
-        }
- 
-        const selesaiEvaluasi = async () => {
-            data.isLoading = true
-            const response = await fetch(process.env.VUE_APP_ROOT_API +'/evkinja/selesai-evaluasi', {
-                headers :  { 'Content-Type': 'application/json' },
-                credentials: 'include'
-                })
-            const dataSelesaiEvaluasi = await response.json()
-            data.details.selesaiEvaluasi = dataSelesaiEvaluasi
-            data.isSelesaiEvaluasi = !data.isSelesaiEvaluasi
-            data.isLoading = false
-        }
+        const belumMengisi = () => data.isBelumMengisi = !data.isBelumMengisi
+        const prosesMengisi = () => data.isProsesMengisi = !data.isProsesMengisi
+        const selesaiMengisi = () => data.isSelesaiMengisi = !data.isSelesaiMengisi
+        const siapEvaluasi = () => data.isSiapEvaluasi = !data.isSiapEvaluasi
+        const prosesEvaluasi = () => data.isProsesEvaluasi = !data.isProsesEvaluasi
+        const selesaiEvaluasi = () => data.isSelesaiEvaluasi = !data.isSelesaiEvaluasi
 
         return {
-            authenticated, user, data, belumMengisi, prosesMengisi, selesaiMengisi,siapEvaluasi, prosesEvaluasi, selesaiEvaluasi
+            authenticated, user, data, belumMengisi, prosesMengisi, selesaiMengisi,siapEvaluasi, prosesEvaluasi, selesaiEvaluasi, role
         }
     }
 

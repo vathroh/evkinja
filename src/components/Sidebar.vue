@@ -9,7 +9,7 @@
                 <li>
                     <a href="#">
                         <span class="icon"><i class="bi bi-speedometer"></i></span>
-                        <span class="title">Dashboard</span>
+                        <span class="title">{{ isHrm }}Dashboard</span>
                     </a>
                 </li>
                 <li>
@@ -25,7 +25,7 @@
                         <span class="title">Upload</span>
                     </router-link>
                 </li>
-                <li v-if="role == 'hrm'">
+                <li v-if="data.user.isHrm">
                     <router-link to="/settings">
                         <span class="icon"><i class="bi bi-sliders"></i></span>
                         <span class="title">Setting</span>
@@ -39,7 +39,7 @@
                 </li>
                 <hr>
                 <li>
-                    <a href="#" @click = "getLogout">
+                    <a href="#" @click.prevent = "getLogout">
                         <span class="icon"><i class="bi bi-box-arrow-right"></i></span>
                         <span class="title">Sign Out</span>
                     </a>
@@ -61,11 +61,11 @@ export default {
         const data = reactive({ 
             isLoading: false,
             user: {
-                role: ''
+                isHrm: false
             }
         });
 
-        const role = reactive(computed( () => store.state.user.role))
+        data.user.isHrm = reactive(computed( () => store.state.user.isHrm))
 
         const getLogout = async () => {
             data.isLoading = true
@@ -75,14 +75,18 @@ export default {
                 credentials :  'include'
             })
             .then( () => {
+                store.commit('setAuth', false)
                 localStorage.removeItem('authenticated')
+                localStorage.removeItem('isAssessed')
+                localStorage.removeItem('isAssessor')
+                localStorage.removeItem('isHrm')
                 router.push('/login')
             })
             data.isLoading = false
         }
 
         return {
-            getLogout, role
+            getLogout, data
         }
 
     }

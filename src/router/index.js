@@ -56,6 +56,7 @@ const router = createRouter ({
     routes
 });
 
+
 router.beforeEach( (to, from, next) => {
     let authenticated = localStorage.getItem('authenticated');
     if(to.name !== "login" && !authenticated ) next({ name: "login" });
@@ -64,5 +65,3 @@ router.beforeEach( (to, from, next) => {
 })
 
 export default router;
-
-

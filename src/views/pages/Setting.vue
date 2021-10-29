@@ -7,6 +7,8 @@
                 <div class="title">
                     Pengaturan
                 </div>
+            </div>
+            <div class="card-body">
                 <div class="card-nav">
                     <ul>
                         <li>
@@ -31,8 +33,6 @@
                         </li>
                     </ul>
                 </div>
-             </div>
-            <div class="card-body">
                 <router-view /> 
             </div>
         </div>
@@ -46,12 +46,16 @@
     import spinner from '../../components/Spinner'
 
     const data = reactive({
+        user: {
+            role: ''
+        },
         isLoading:  false
     })
 </script>
 <style scoped>
 .card-nav {
     width:  100%;
+    transform: translateY(-130%);
 } 
 
 .card-nav ul {
@@ -66,17 +70,17 @@
 }
 
 .card-nav ul li:hover {
-    background: var(--primary2);
-    color: var(--primary1);
+    background: var(--primary1);
+    color: var(--primary2);
 }
 
 .card-nav ul li a {
     width: 100%;
     height: 100%;
-    color:  var(--primary2);
+    color:  var(--primary1);
 }
 
 .card-nav ul li:hover a{
-    color: var(--primary1);
+    color: var(--primary2);
 }
 </style>
