@@ -12,6 +12,41 @@ const routes = [
         component: () => import('../views/pages/Upload')
     },
     {
+        path: '/myEvaluation',
+        name: 'myEvaluation',
+        component: () => import('../views/pages/MyEvaluation')
+    },
+    {
+        path: '/assessment/:id',
+        name: 'assessment',
+        component: () => import('../views/pages/AssessmentForm')
+    },
+    {
+        path: '/request-edit',
+        name: 'requestEdit',
+        component: () => import('../views/pages/RequestEdit')
+    },
+    {
+        path: '/request-edit-by-assessor',
+        name: 'requestEditByAssessor',
+        component: () => import('../views/pages/RequestEditByAssessor')
+    },
+    {
+        path: '/recap',
+        name: 'recap',
+        component: () => import('../views/pages/Recapitulation')
+    },
+    {
+        path: '/print',
+        name: 'print',
+        component: () => import('../views/pages/Print')
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: () => import('../views/pages/Login')
+    },
+    {
         path: '/settings',
         name: 'settings',
         component: () => import('../views/pages/Setting'),
@@ -35,19 +70,14 @@ const routes = [
                 path: '/assessors',
                 name: 'assessors-setting',
                 component: () => import('../views/pages/setting/Assessors.vue')
+            },
+            {
+                path: '/setup-details/:id',
+                name: 'setup-details',
+                component: () => import('../views/pages/setting/SetupDetails.vue')
             }
         ]
     },
-    {
-        path: '/assessment/:id',
-        name: 'assessment',
-        component: () => import('../views/pages/AssessmentForm')
-    },
-    {
-        path: '/login',
-        name: 'login',
-        component: () => import('../views/pages/Login')
-    }
 ];
 
 

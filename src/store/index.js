@@ -6,6 +6,7 @@ export default createStore({
         extent: false,
         user: {
         },
+        jobTitles: {},
         data: {
             summary: {},
             recapitulation:{}
@@ -21,7 +22,8 @@ export default createStore({
         setUserId: (state, value) => state.user.id = value,
         setUserName: (state, value) => state.user.name = value,
         setRecapitulation: (state, value) => state.data.recapitulation = value,
-        setUser: (state, obj) => state.user = obj
+        setUser: (state, obj) => state.user = obj,
+        setJobTitles: (state, obj) => state.jobTitles = obj
     },
     actions: {
     },

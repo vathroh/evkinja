@@ -1,4 +1,5 @@
 <template>
+  <spinner :isLoading="data.isLoading" />
     <div>
         <div class="wrapper">
             <div class="title">
@@ -14,52 +15,28 @@
 
 <script setup>
     import { onMounted, reactive } from 'vue'
+    import spinner from "../../../components/Spinner";
+    
 
     const data = reactive({
-        jobTitles: []
+        jobTitles: [],
+        isLoading: false
     })
 
     onMounted(
         async() => {
+            data.isLoading = true
             const jobTitleResponse = await fetch(process.env.VUE_APP_ROOT_API + '/evkinja/current-job-title', {
                 headers: {'Content-Type': 'application/json'},
                 credentials: 'include'
             })
 
             data.jobTitles = await jobTitleResponse.json();
+            data.isLoading = false
         }
     )
 
 </script>
 
 <style>
-.wrapper {
-    position:  relative;
-    display: flex;
-    flex-wrap:  wrap;
-    border:  2px solid var(--primary5);
-    justify-content:  space-between;
-    border-radius: 10px;
-    padding:  20px;
-    width:  100%;
-}
-
-.wrapper .box {
-    padding:  3px;
-    width:  230px;
-}
-
-.wrapper .title {
-    position: absolute;
-    padding: 5px;
-    transform: translateY(-120%);
-    border:  2px solid var(--primary5);
-    border-radius: 5px;
-    background: var(--primary2);
-}
-
-.wrapper .box label {
-    margin-left: 8px;
-}
-
 </style>

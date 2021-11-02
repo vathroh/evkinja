@@ -11,7 +11,6 @@
         </div> 
         <div class="card-body">
             <table>
-        
                 <tbody>
                     <tr>
                         <td>Nama </td>
@@ -27,7 +26,7 @@
             </tr>
         </tbody>
     </table>
-    <table class="table">
+    <table class="assessment table">
         <thead>
             <tr>
                 <th>No.</th>
@@ -140,21 +139,21 @@
         async () => {
             data.isLoading = true
 
-            const thisUser = await fetch('http://localhost:8000/api/evkinja/personil/'+id, 
+            const thisUser = await fetch(process.env.VUE_APP_ROOT_API + '/evkinja/personil/'+id, 
                 {
                     headers:  { 'Content-Type': 'application/json'},
                     credentials:  'include'
                 }
             )
 
-            const thisContent = await fetch('http://localhost:8000/api/evkinja/content/'+id, 
+            const thisContent = await fetch(process.env.VUE_APP_ROOT_API +'/evkinja/content/'+id, 
                 {
                     headers:  { 'Content-Type': 'application/json'},
                     credentials:  'include'
                 }
             )
 
-            const thisEvkinja = await fetch('http://localhost:8000/api/evkinja/data/'+id, 
+            const thisEvkinja = await fetch(process.env.VUE_APP_ROOT_API +'/evkinja/data/'+id, 
                 {
                     headers:  { 'Content-Type': 'application/json'},
                     credentials:  'include'
@@ -167,7 +166,6 @@
     
             data.isLoading = false
         }
-
     )
 
 </script>

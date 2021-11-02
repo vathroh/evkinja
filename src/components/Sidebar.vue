@@ -7,9 +7,9 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="http://osp1.my.id/dashboard">
                         <span class="icon"><i class="bi bi-speedometer"></i></span>
-                        <span class="title">{{ isHrm }}Dashboard</span>
+                        <span class="title">Dashboard</span>
                     </a>
                 </li>
                 <li>
@@ -20,9 +20,9 @@
                 </li>
                 <hr>
                 <li>
-                    <router-link to="/upload">
-                        <span class="icon"><i class="bi bi-person-check-fill"></i></span>
-                        <span class="title">Upload</span>
+                    <router-link to="/myEvaluation">
+                        <span class="icon"><i class="bi bi-card-list"></i></span>
+                        <span class="title">Evaluasi Saya</span>
                     </router-link>
                 </li>
                 <li v-if="data.user.isHrm">
@@ -31,12 +31,31 @@
                         <span class="title">Setting</span>
                     </router-link>
                 </li>
-                <li>
-                    <router-link to="/login">
-                        <span class="icon"><i class="bi bi-pencil-square"></i></span>
-                        <span class="title">Login</span>
+                <li v-if="data.user.isHrm || data.user.isAssessor">
+                    <router-link to="/request-edit">
+                        <span class="icon"><i class="bi bi-file-earmark-check"></i></span>
+                        <span class="title">Permintaan Edit</span>
                     </router-link>
                 </li>
+                <li v-if="data.user.isHrm">
+                    <router-link to="/request-edit-by-assessor">
+                        <span class="icon"><i class="bi bi-file-earmark-check-fill"></i></span>
+                        <span class="title">Permintaan Edit Penilai</span>
+                    </router-link>
+                </li>
+                <li v-if="data.user.isHrm || data.user.isAssessor">
+                    <router-link to="/recap">
+                        <span class="icon"><i class="bi bi-card-checklist"></i></span>
+                        <span class="title">Rekap</span>
+                    </router-link>
+                </li>
+                <li v-if="data.user.isHrm || data.user.isAssessor">
+                    <router-link to="/print">
+                        <span class="icon"><i class="bi bi-printer"></i></span>
+                        <span class="title">Cetak</span>
+                    </router-link>
+                </li>
+
                 <hr>
                 <li>
                     <a href="#" @click.prevent = "getLogout">

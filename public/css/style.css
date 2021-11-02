@@ -37,6 +37,76 @@ a {
     text-align: center;
 }
 
+.mt-10 {
+    margin-top:10px;
+}
+
+.mt-20 {
+    margin-top:20px;
+}
+
+.mt-30 {
+    margin-top:30px;
+}
+
+.mt-40 {
+    margin-top:40px;
+}
+
+.mt-50 {
+    margin-top:50px;
+}
+
+.height-100 {
+    height: 100px;
+    overflow: auto;
+}
+
+.height-200 {
+    height: 200px;
+    overflow: auto;
+}
+
+.height-300 {
+    height: 300px;
+    overflow: auto;
+}
+
+.height-400 {
+    height: 400px;
+    overflow: auto;
+}
+
+.height-500 {
+    height: 500px;
+    overflow: auto;
+}
+
+.width-100 {
+    width: 100px;
+    overflow: auto;
+}
+
+.width-200 {
+    width: 200px;
+    overflow: auto;
+}
+
+.width-300 {
+    width: 300px;
+    overflow: auto;
+}
+
+.width-400 {
+    width: 400px;
+    overflow: auto;
+}
+
+.width-500 {
+    width: 500px;
+    overflow: auto;
+}
+
 .highlight {
     background: #d6e2f4;
 }
@@ -353,26 +423,29 @@ a {
     border-radius: 10px;
 }
 
-.details table {
+.table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
     overflow: auto;
 }
 
-.details table thead {
+.table thead {
     font-weight: 600;
 }
 
+.table tr,
 .details .primary-card table tr {
     border-bottom: 1px solid rgba(0,0,0,0.1);
     color: var(--primary4);
 }
 
+.table tr:last-child,
 .details .primary-card table tr:last-child {
     border-bottom: none;
 }
 
+.table tbody tr:hover,
 .details .primary-card table tbody tr:hover {
     background: var(--primary1);
     color: var(--primary2);
@@ -383,6 +456,7 @@ a {
     color: var(--primary2);
 }
 
+.table tbody tr td,
 .details .primary-card table tr td {
     padding: 10px 0;
 }
@@ -485,6 +559,7 @@ a {
 
     .main {
         width: 100%;
+        height: 100vh;
         left:0;
     }
     
@@ -698,19 +773,19 @@ a {
     visibility: hidden;
 }
 
-.table {
+.assessment.table {
     width:  100%;
     border-collapse:  collapse;
     margin-top: 20px;
     border-radius:  20px;
 }
 
-.table tr td{
+.assessment.table tr td{
     padding:  10px 10px;
 }
 
-.table tr th,
-.table tr td {
+.assessment.table tr th,
+.assessment.table tr td {
     border: 1px solid var(--primary5);
 }
 
@@ -787,6 +862,88 @@ a {
 
 .bagi2 {
     width:  49%;
+}
+
+.box-notification {
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 0 7px 25px rgba(0,0,0,0.2);
+    text-align: center;
+}
+.box-notification .danger {
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    background: red;
+}
+
+.box-notification .success {
+    border-radius: 10px;
+    padding: 20px;
+    color: green;
+    background: white;
+}
+
+.btn {
+    font-size: 18px;
+    text-transform: uppercase;
+    padding: 5px 30px;;
+    font-weight: bold;
+    margin:  10px;
+    opacity: .8;
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+} 
+
+.table .btn {
+    margin: 0 10px;
+}
+.btn.btn-sm{
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.btn.btn-success{
+    background: var(--success);
+}
+
+.btn.btn-warning{
+    background: var(--warning);
+}
+
+.btn:hover {
+    background: var(--primary1);
+    color: var(--primary2);
+}
+
+.wrapper {
+    position:  relative;
+    display: flex;
+    flex-wrap:  wrap;
+    border:  2px solid var(--primary5);
+    justify-content:  space-between;
+    border-radius: 10px;
+    padding:  20px;
+    width:  100%;
+}
+
+.wrapper .box {
+    padding:  3px;
+    width:  230px;
+}
+
+.wrapper .title {
+    position: absolute;
+    padding: 5px;
+    transform: translateY(-120%);
+    border:  2px solid var(--primary5);
+    border-radius: 5px;
+    background: var(--primary2);
+}
+
+.wrapper .box label {
+    margin-left: 8px;
 }
 
 
