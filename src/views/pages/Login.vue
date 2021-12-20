@@ -1,5 +1,6 @@
 <template>
   <spinner :isLoading="data.isLoading" />
+  <toastUi/>
   <div class="login-page">
     <div
       class="card"
@@ -40,6 +41,7 @@
           <button type="button" @click="getLogin" class="submit-btn">
             Login
           </button>
+
         </div>
 
         <div class="register-form" :class="{ formhidden: !isslideactive }">
@@ -75,14 +77,16 @@
         </div>
       </div>
     </div>
-  </div>
+</div>
 </template>
 
 
 <script setup>
 import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
+import toast from "../../components/toast";
 import spinner from "../../components/Spinner";
+import toastUi from "../../components/toast/ToastUi.vue"
 
 const router = useRouter();
 const isslideactive = ref(false);
@@ -98,19 +102,31 @@ const data = reactive({
 });
 
 const getLogin = async () => {
-  data.isLoading = true;
-  const response = await fetch(process.env.VUE_APP_ROOT_API + "/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify(data),
-  });
-  data.isLoading = false;
-  if (response.status == 200) {
-    localStorage.setItem("authenticated", "true");
-    router.push("/");
-  } else {
-    console.log(response);
-  }
+    if(data.email === ''){ await toast.warning('Email harus diisi!');
+    } else if(data.password === ''){ await toast.warning('Password harus diisi!'); 
+    } else {
+      data.isLoading = true;
+      try {
+        const response = await fetch(process.env.VUE_APP_ROOT_API + "/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(data),
+        });
+        data.isLoading = false;
+        if (response.status == 200) {
+            localStorage.setItem("authenticated", "true");
+            toast.success('Anda berhasil login.');
+            router.push("/");
+        } else if(response.status == 401){
+            toast.warning('Email atau password yang anda masukkan tidak benar!');
+        } else {
+            toast.error('Error');
+        }
+      }catch{
+        data.isLoading = false;
+        toast.error('tidak dapat terhubung ke server!');
+      }
+    }
 };
 </script>

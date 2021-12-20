@@ -1,5 +1,6 @@
 <template>
   <!-- Card -->
+  <toastui />
   <spinner :isLoading="data.isLoading" />
 
   <div class="card-box" v-if="user.isAssessor || user.isHrm">
@@ -196,6 +197,8 @@
                   (e) => e.district == district.nama_kab
                 ).length
               }}
+
+              {{ district.nama_kab }}
             </td>
             <td class="text-center">
               {{
@@ -406,13 +409,15 @@
 
 
 <script>
+import toast from "../../components/toast";
 import spinner from "../../components/Spinner";
+import toastui from "../../components/toast/ToastUi";
 import { onMounted, reactive, computed } from "vue";
-import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 export default {
-  components: { spinner },
+  components: { spinner, toastui},
   setup() {
     const store = useStore();
     const router = useRouter();
@@ -539,13 +544,14 @@ export default {
           return a + b;
         }, 0);
         data.jobTitles.map((item) => {
-          if (item.belumMengisi.length > 0) {
+            if (Object.values(item.belumMengisi).length > 0 ) {
             databelumMengisi.push(Object.values(item.belumMengisi));
           }
         });
         databelumMengisi.map((item) => {
             item.map( (e) => data.details.belumMengisi.push(e))
         })
+
 
         let prosesMengisi = [];
         let dataprosesMengisi = [];
@@ -709,7 +715,7 @@ export default {
       siapEvaluasi,
       prosesEvaluasi,
       selesaiEvaluasi,
-      role,createNewValue,
+      role, createNewValue, toast,
     };
   },
 };

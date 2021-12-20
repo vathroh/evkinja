@@ -87,10 +87,15 @@
 <script setup>
     import { onMounted, reactive, ref } from 'vue'
     import spinner from "../../../components/Spinner";
-    import { useStore } from 'vuex'
+    import getTimKorkotJobTitles from "../../../components/functions/getTimKorkotJobTitles";
+    import getTimFaskelJobTitles from "../../../components/functions/getTimFaskelJobTitles";
+    import getTimAskotMandiriJobTitles from "../../../components/functions/getTimAskotMandiriJobTitles";
 
-    const store = useStore()
+    const { getTimKorkot } = getTimKorkotJobTitles();
+    const { getTimFaskel } = getTimFaskelJobTitles();
+    const { getTimAskotMandiri } = getTimAskotMandiriJobTitles();
     let isHidden = ref(true)
+
     const data = reactive({
         quarter: 0,
         year: 0,
@@ -135,8 +140,22 @@
     const openModal = async () => {
         isHidden.value = !isHidden.value
         data.isLoading = true
-        const jobTitles = store.state.jobTitles;
-        data.jobTitles = jobTitles
+        let timKorkot = await getTimKorkot();
+        let timFaskel = await getTimFaskel();
+        let timAskotMandiri = await getTimAskotMandiri();
+        data.jobTitles = [];
+
+        timKorkot.map( (e) => {
+          data.jobTitles.push(e)
+        })
+
+        timFaskel.map( (e) => {
+          data.jobTitles.push(e)
+        })
+
+        timAskotMandiri.map( (e) => {
+          data.jobTitles.push(e)
+        })
 
         const locationRes = await fetch(process.env.VUE_APP_ROOT_API + '/this-location', {
             method: 'post',
@@ -173,63 +192,5 @@
 </script>
 
 <style>
-.modal.hidden {
-    z-index: -1;
-}
 
-.modal {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 50vw;
-    height:  50vh;
-    transform: translate(25%, 50%);
-    background:  white;
-    border-radius: 10px;
-    box-shadow: 0 7px 25px rgba(0,0,0,0.2);
-}
-
-.modal-header {
-    position: relative;
-    width: 96%;
-    height: 50px;
-    transform: translateY(-50%);
-    left: 2%;
-    text-align: center;
-    background: grey;
-    border-radius: 10px;
-    box-shadow: 0 7px 25px rgba(0,0,0,0.2);
-    line-height: 50px;
-    font-size: 18px;
-    color: white;
-}
-
-.modal-body {
-    padding: 20px;
-}
-
-.modal-footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-}
-
-.form {
-    width: 100%;
-    display: flex;
-    height: 40px;
-    margin-top: 20px;
-    line-height: 40px;
-}
-
-.form label{
-    width: 30%;
-    text-align: right;
-    padding-right: 20px;
-}
-
-.form select {
-    width: 70%;
-}
 </style>

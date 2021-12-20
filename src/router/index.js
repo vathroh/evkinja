@@ -7,7 +7,7 @@ const routes = [
         component: () => import('../views/pages/Index')
     },
     {
-        path: '/upload',
+        path: '/upload/:id',
         name: 'upload',
         component: () => import('../views/pages/Upload')
     },
@@ -45,6 +45,11 @@ const routes = [
         path: '/login',
         name: 'login',
         component: () => import('../views/pages/Login')
+    },
+    {
+      path: '/count-personnels',
+      name: 'personnelCount',
+      component: () => import('../views/pages/personnels/Count')
     },
     {
         path: '/settings',
